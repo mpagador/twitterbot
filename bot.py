@@ -47,14 +47,14 @@ def message_writer(choice):
         positive.close()
     else:
         chosen_follower = random.choice(follower_list)
-        already_received = open("followers_who_received_messages.txt", "r+", encoding="utf-8-sig")
-        already_received_list = already_received.readlines()
+        with open("followers_who_received_messages.txt", "r+", encoding="utf-8") as file:
+            already_received_list = []
+            for name in file.readlines():
+                already_received_list.append(name[:-1])
+            while chosen_follower in already_received_list:
+                chosen_follower = random.choice(follower_list)
+            file.write(chosen_follower + "\n")
 
-        while chosen_follower in already_received_list:
-            print(chosen_follower)
-            chosen_follower = random.choice(follower_list)
-
-        already_received.write(chosen_follower + '\n')
         greeting = random.choice(greetings)
         message = greeting + " @" + chosen_follower + ", "
 
@@ -84,7 +84,6 @@ def message_writer(choice):
 #generates a random number to determine message type and posts the final tweet
 def post_tweet():
     num = random.randint(1, 3)
-    print(message_writer(num))
     api.update_status(message_writer(num))
 
 
