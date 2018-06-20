@@ -22,8 +22,20 @@ def limit_handled(cursor):
 #follows back all current followers
 def follow_back():
     for follower in limit_handled(tweepy.Cursor(api.followers).items()):
-        follower.follow()
-        follower_list.append(follower.screen_name)
+        try:
+            follower.follow()
+            follower_list.append(follower.screen_name)
+        except tweepy.error.TweepError:
+            pass
+
+#favorites/likes all tweets that the bot was mentioned (tagged) in
+def fave_mentions():
+    for mentions in tweepy.Cursor(api.mentions_timeline).items():
+        try:
+            api.create_favorite(mentions.id)
+        except:
+            pass
+
 
 #chooses a random line from a file using Waterman's Reservoir Algorithim (Algorithim R)
 def random_line(file):
@@ -35,7 +47,7 @@ def random_line(file):
 
 #clears the text file containing names of followers who already received messages when a new day starts
 def clear_received_file():
-    if datetime.time.hour == 0:
+    if datetime.datetime.now().hour == 0:
         open('followers_who_received_messages.txt', 'w').close()
 
 
@@ -78,6 +90,7 @@ def message_writer(choice):
                 message = message + "I want you to remember that " + line
             else:
                 message = message + "I just want to let you know that " + line
+    print(message)
     return message
 
 
@@ -89,6 +102,7 @@ def post_tweet():
 
 if __name__ == "__main__":
     follow_back()
+    fave_mentions()
     clear_received_file()
     post_tweet()
 
