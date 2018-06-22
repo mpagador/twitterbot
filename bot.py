@@ -4,12 +4,14 @@ import time
 import datetime
 from private import *
 
+
 auth = tweepy.OAuthHandler(C_KEY, C_SECRET)
 auth.set_access_token(A_TOKEN, A_TOKEN_SECRET)
 api = tweepy.API(auth)
 
 greetings = ["Hey", "Hello", "Hi"]
 follower_list = []
+
 
 #sleeps for 1 minute if RateLimitError is raised
 def limit_handled(cursor):
@@ -19,6 +21,7 @@ def limit_handled(cursor):
         except tweepy.RateLimitError:
             time.sleep(60)
 
+
 #follows back all current followers
 def follow_back():
     for follower in limit_handled(tweepy.Cursor(api.followers).items()):
@@ -27,6 +30,15 @@ def follow_back():
             follower_list.append(follower.screen_name)
         except tweepy.error.TweepError:
             pass
+
+
+#unfollows non-followers
+def unfollow():
+    for f in limit_handled(tweepy.Cursor(api.friends).items()):
+        if f.screen_name not in follower_list:
+            api.destroy_friendship(f.screen_name)
+            print("Unfollowed " + f.screen_name)
+
 
 #favorites/likes all tweets that the bot was mentioned (tagged) in
 def fave_mentions():
@@ -45,6 +57,7 @@ def random_line(file):
         line = aline
     return line
 
+
 #clears the text file containing names of followers who already received messages when a new day starts
 def clear_received_file():
     if datetime.datetime.now().hour == 0:
@@ -53,7 +66,7 @@ def clear_received_file():
 
 #writes the message, and directs the tweet at a random follower if the message type is an encouragement or compliment
 def message_writer(choice):
-    if choice == 1:
+    if choice == 1 or choice == 3:
         positive = open("positive.txt", "r", encoding="utf-8-sig")
         message = random_line(positive)
         positive.close()
@@ -71,9 +84,8 @@ def message_writer(choice):
         message = greeting + " @" + chosen_follower + ", "
 
         if choice == 2:
-            encouragements = open("encouragements.txt", "r", encoding="utf-8-sig")
-            line = random_line(encouragements)
-            encouragements.close()
+            with open("encouragements.txt", "r", encoding="utf-8-sig") as encouragements:
+                line = random_line(encouragements)
             if greeting == "Hey":
                 message = message + line
             elif greeting == "Hello":
@@ -81,9 +93,8 @@ def message_writer(choice):
             else:
                 message = message + "this is a reminder that " + line
         else:
-            compliments = open("compliments.txt", "r", encoding="utf-8-sig")
-            line = random_line(compliments)
-            compliments.close()
+            with open("compliments.txt", "r", encoding="utf-8-sig") as compliments:
+                line = random_line(compliments)
             if greeting == "Hey":
                 message = message + line
             elif greeting == "Hello":
@@ -96,15 +107,13 @@ def message_writer(choice):
 
 #generates a random number to determine message type and posts the final tweet
 def post_tweet():
-    num = random.randint(1, 3)
+    num = random.randint(1, 4)
     api.update_status(message_writer(num))
 
 
 if __name__ == "__main__":
     follow_back()
+    unfollow()
     fave_mentions()
     clear_received_file()
     post_tweet()
-
-
-
