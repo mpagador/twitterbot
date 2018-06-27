@@ -49,15 +49,6 @@ def fave_mentions():
             pass
 
 
-#chooses a random line from a file using Waterman's Reservoir Algorithim (Algorithim R)
-def random_line(file):
-    line = next(file)
-    for num, aline in enumerate(file):
-        if random.randrange(num + 2): continue
-        line = aline
-    return line
-
-
 #clears the text file containing names of followers who already received messages when a new day starts
 def clear_received_file():
     if datetime.datetime.now().hour == 0:
@@ -67,9 +58,8 @@ def clear_received_file():
 #writes the message, and directs the tweet at a random follower if the message type is an encouragement or compliment
 def message_writer(choice):
     if choice == 1 or choice == 3:
-        positive = open("positive.txt", "r", encoding="utf-8-sig")
-        message = random_line(positive)
-        positive.close()
+        with open("positive.txt", "r", encoding="utf-8-sig") as positive:
+            message = random.choice(positive.readlines())
     else:
         chosen_follower = random.choice(follower_list)
         with open("followers_who_received_messages.txt", "r+", encoding="utf-8") as file:
@@ -85,7 +75,7 @@ def message_writer(choice):
 
         if choice == 2:
             with open("encouragements.txt", "r", encoding="utf-8-sig") as encouragements:
-                line = random_line(encouragements)
+                line = random.choice(encouragements.readlines())
             if greeting == "Hey":
                 message = message + line
             elif greeting == "Hello":
@@ -94,7 +84,7 @@ def message_writer(choice):
                 message = message + "this is a reminder that " + line
         else:
             with open("compliments.txt", "r", encoding="utf-8-sig") as compliments:
-                line = random_line(compliments)
+                line = random.choice(compliments.readlines())
             if greeting == "Hey":
                 message = message + line
             elif greeting == "Hello":
