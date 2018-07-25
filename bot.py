@@ -20,25 +20,15 @@ def limit_handled(cursor):
         try:
             yield cursor.next()
         except tweepy.RateLimitError:
+            print("sleeping...")
             time.sleep(60)
 
 
-#follows back all current followers
-def follow_back():
+#adds all current followers to a list
+def list_followers():
     for follower in limit_handled(tweepy.Cursor(api.followers).items()):
-        try:
-            follower.follow()
             follower_list.append(follower.screen_name)
-        except tweepy.error.TweepError:
-            pass
-
-
-#unfollows non-followers
-def unfollow():
-    for f in limit_handled(tweepy.Cursor(api.friends).items()):
-        if f.screen_name not in follower_list:
-            api.destroy_friendship(f.screen_name)
-            print("Unfollowed " + f.screen_name)
+            print("added to list")
 
 
 #favorites/likes all tweets that the bot was mentioned (tagged) in
@@ -103,8 +93,7 @@ def post_tweet():
 
 
 if __name__ == "__main__":
-    follow_back()
-    unfollow()
-    fave_mentions()
+    list_followers()
     clear_received_file()
     post_tweet()
+    fave_mentions()
