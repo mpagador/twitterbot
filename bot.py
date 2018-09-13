@@ -28,7 +28,7 @@ def limit_handled(cursor):
 def list_followers():
     for follower in limit_handled(tweepy.Cursor(api.followers).items()):
             follower_list.append(follower.screen_name)
-            print("added to list")
+            # print("added to list")
 
 
 # favorites/likes all tweets that the bot was mentioned (tagged) in
@@ -50,6 +50,7 @@ def clear_received_file():
 
 # clears followers log
 def clear_received_file():
+    print("Clearing follower log")
     open('followers_who_received_messages.txt', 'w').close()
 
 
@@ -59,15 +60,19 @@ def positive_choice():
     with open("positive_log.txt", "r", encoding="utf-8-sig") as p_log:
         for p in p_log.readlines():
             positive_log.append(p)
-    if len(positive_log) == 116:
+            # print("appended to positive_log")
+    print(len(positive_log))
+    if len(positive_log) >= 116:
         open('positive_log.txt', 'w').close()
+        print("cleared positive log")
     with open("positive.txt", "r", encoding="utf-8-sig") as positive:
         message = random.choice(positive.readlines())
-        if len(positive_log) != 0:
+        if len(positive_log) != 0 and len(positive_log) < 116:
             while message in positive_log:
                 message = random.choice(positive.readlines())
-    with open("positive_log.txt", "w", encoding="utf-8") as p_log:
-        p_log.write(message + "\n")
+                print("choosing new message")
+    with open("positive_log.txt", "a", encoding="utf-8") as p_log:
+        p_log.write(message)
     return message
 
 
@@ -77,15 +82,19 @@ def encouragements_choice():
     with open("encouragements_log.txt", "r", encoding="utf-8-sig") as e_log:
         for e in e_log.readlines():
             encouragements_log.append(e)
-    if len(encouragements_log) == 77:
+            # print("append to encouragements_log")
+    print(len(encouragements_log))
+    if len(encouragements_log) >= 77:
         open('encouragements_log.txt', 'w').close()
+        print("cleared encouragements_log")
     with open("encouragements.txt", "r", encoding="utf-8-sig") as encouragements:
         line = random.choice(encouragements.readlines())
-        if len(encouragements_log) != 0:
+        if len(encouragements_log) != 0 and len(encouragements_log) < 77:
             while line in encouragements_log:
                 line = random.choice(encouragements.readlines())
-    with open("encouragements_log.txt", "w", encoding="utf-8") as e_log:
-        e_log.write(line + "\n")
+                print("choosing new line")
+    with open("encouragements_log.txt", "a", encoding="utf-8") as e_log:
+        e_log.write(line)
     return line
 
 
@@ -95,15 +104,18 @@ def compliments_choice():
     with open("compliments_log.txt", "r", encoding="utf-8-sig") as c_log:
         for c in c_log.readlines():
             compliments_log.append(c)
-    if len(compliments_log) == 99:
+            print("append compliments_log")
+    print(len(compliments_log))
+    if len(compliments_log) >= 99:
         open('compliments_log.txt', 'w').close()
     with open("compliments.txt", "r", encoding="utf-8-sig") as compliments:
         line = random.choice(compliments.readlines())
-        if len(compliments_log) != 0:
+        if len(compliments_log) != 0 and len(compliments_log) < 99:
             while line in compliments_log:
                 line = random.choice(compliments.readlines())
-    with open("compliments_log.txt", "w", encoding="utf-8") as c_log:
-        c_log.write(line + "\n")
+                print("choosing new line")
+    with open("compliments_log.txt", "a", encoding="utf-8") as c_log:
+        c_log.write(line)
     return line
 
 
@@ -114,11 +126,14 @@ def follower_choice():
         follower_log = []
         for name in f_log.readlines():
             follower_log.append(name[:-1])
-        if len(follower_log) == user.followers_count:
+            # print("append follower_log")
+        if len(follower_log) >= user.followers_count:
+            print(len(follower_log))
             clear_received_file()
         elif len(follower_log) != 0:
             while chosen_follower in follower_log:
                 chosen_follower = random.choice(follower_list)
+                print("choosing new follower")
         f_log.write(chosen_follower + "\n")
     return chosen_follower
 
@@ -160,6 +175,7 @@ def post_tweet():
 
 if __name__ == "__main__":
     list_followers()
-    clear_received_file()
+    # clear_received_file()
     post_tweet()
     fave_mentions()
+    # message_writer(1)
