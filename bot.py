@@ -27,8 +27,8 @@ def limit_handled(cursor):
 # adds all current followers to a list
 def list_followers():
     for follower in limit_handled(tweepy.Cursor(api.followers).items()):
-            follower_list.append(follower.screen_name)
-            # print("added to list")
+        follower_list.append(follower.screen_name)
+        # print("added to list")
 
 
 # favorites/likes all tweets that the bot was mentioned (tagged) in
@@ -49,28 +49,31 @@ def clear_received_file():
 
 
 # clears followers log
-def clear_received_file():
-    print("Clearing follower log")
+def clear_followers():
     open('followers_who_received_messages.txt', 'w').close()
+    print("Clearing follower log")
 
 
 # chooses a positive message that isn't in the log, clears log if every line has been chosen
 def positive_choice():
-    positive_log = []
+    #positive_log = []
     with open("positive_log.txt", "r", encoding="utf-8-sig") as p_log:
-        for p in p_log.readlines():
-            positive_log.append(p)
+        positive_log = p_log.readlines()
+        #for p in p_log.readlines():
+            #positive_log.append(p)
             # print("appended to positive_log")
-    print(len(positive_log))
+    print('Positive log length: ' + str(len(positive_log)))
     if len(positive_log) >= 116:
         open('positive_log.txt', 'w').close()
-        print("cleared positive log")
+        print("Cleared positive log")
     with open("positive.txt", "r", encoding="utf-8-sig") as positive:
-        message = random.choice(positive.readlines())
+        p_txt = positive.readlines()
+        #message = random.choice(positive.readlines())
+        message = random.choice(p_txt)
         if len(positive_log) != 0 and len(positive_log) < 116:
             while message in positive_log:
-                message = random.choice(positive.readlines())
-                print("choosing new message")
+                message = random.choice(p_txt)
+                print("Choosing new positive message")
     with open("positive_log.txt", "a", encoding="utf-8") as p_log:
         p_log.write(message)
     return message
@@ -78,21 +81,24 @@ def positive_choice():
 
 # chooses an encouragement that isn't in the log, clears log if every line has been chosen
 def encouragements_choice():
-    encouragements_log = []
+    #encouragements_log = []
     with open("encouragements_log.txt", "r", encoding="utf-8-sig") as e_log:
-        for e in e_log.readlines():
-            encouragements_log.append(e)
+        encouragements_log = e_log.readlines()
+        #for e in e_log.readlines():
+            #encouragements_log.append(e)
             # print("append to encouragements_log")
-    print(len(encouragements_log))
+    print('Encouragements log length: ' + str(len(encouragements_log)))
     if len(encouragements_log) >= 77:
         open('encouragements_log.txt', 'w').close()
-        print("cleared encouragements_log")
+        print("Cleared encouragements_log")
     with open("encouragements.txt", "r", encoding="utf-8-sig") as encouragements:
-        line = random.choice(encouragements.readlines())
+        e_txt = encouragements.readlines()
+        line = random.choice(e_txt)
+        #line = random.choice(encouragements.readlines())
         if len(encouragements_log) != 0 and len(encouragements_log) < 77:
             while line in encouragements_log:
-                line = random.choice(encouragements.readlines())
-                print("choosing new line")
+                line = random.choice(e_txt)
+                print("Choosing new line")
     with open("encouragements_log.txt", "a", encoding="utf-8") as e_log:
         e_log.write(line)
     return line
@@ -100,19 +106,23 @@ def encouragements_choice():
 
 # chooses a compliment that isn't in the log, clears log if every line has been chosen
 def compliments_choice():
-    compliments_log = []
+    #compliments_log = []
     with open("compliments_log.txt", "r", encoding="utf-8-sig") as c_log:
-        for c in c_log.readlines():
-            compliments_log.append(c)
-            print("append compliments_log")
-    print(len(compliments_log))
+        compliments_log = c_log.readlines()
+        #for c in c_log.readlines():
+            #compliments_log.append(c)
+            # print("append compliments_log")
+    print('Compliments log length: ' + str(len(compliments_log)))
     if len(compliments_log) >= 99:
         open('compliments_log.txt', 'w').close()
+        print('Cleared compliments_log')
     with open("compliments.txt", "r", encoding="utf-8-sig") as compliments:
-        line = random.choice(compliments.readlines())
+        c_txt = compliments.readlines()
+        line = random.choice(c_txt)
+        #line = random.choice(compliments.readlines())
         if len(compliments_log) != 0 and len(compliments_log) < 99:
             while line in compliments_log:
-                line = random.choice(compliments.readlines())
+                line = random.choice(c_txt)
                 print("choosing new line")
     with open("compliments_log.txt", "a", encoding="utf-8") as c_log:
         c_log.write(line)
@@ -128,8 +138,8 @@ def follower_choice():
             follower_log.append(name[:-1])
             # print("append follower_log")
         if len(follower_log) >= user.followers_count:
-            print(len(follower_log))
-            clear_received_file()
+            print('Follower log length: ' + str(len(follower_log)))
+            clear_followers()
         elif len(follower_log) != 0:
             while chosen_follower in follower_log:
                 chosen_follower = random.choice(follower_list)
@@ -140,14 +150,14 @@ def follower_choice():
 
 # writes the message, and directs the tweet at a random follower if the message type is an encouragement or compliment
 def message_writer(choice):
-    if choice == 1 or choice == 3:
+    if choice == 1 or choice == 2:
         message = positive_choice()
     else:
         chosen_follower = follower_choice()
         greeting = random.choice(greetings)
         message = greeting + " @" + chosen_follower + ", "
 
-        if choice == 2:
+        if choice == 3:
             line = encouragements_choice()
             if greeting == "Hey":
                 message = message + line
