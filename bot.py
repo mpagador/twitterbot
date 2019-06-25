@@ -1,7 +1,6 @@
 import tweepy
 import random
 import time
-# import datetime
 from private import *
 
 
@@ -56,21 +55,16 @@ def clear_followers():
 
 # chooses a positive message that isn't in the log, clears log if every line has been chosen
 def positive_choice():
-    #positive_log = []
     with open("positive_log.txt", "r", encoding="utf-8-sig") as p_log:
         positive_log = p_log.readlines()
-        #for p in p_log.readlines():
-            #positive_log.append(p)
-            # print("appended to positive_log")
     print('Positive log length: ' + str(len(positive_log)))
-    if len(positive_log) >= 116:
+    if len(positive_log) >= 130:
         open('positive_log.txt', 'w').close()
         print("Cleared positive log")
     with open("positive.txt", "r", encoding="utf-8-sig") as positive:
         p_txt = positive.readlines()
-        #message = random.choice(positive.readlines())
         message = random.choice(p_txt)
-        if len(positive_log) != 0 and len(positive_log) < 116:
+        if len(positive_log) != 0 and len(positive_log) < len(p_txt):
             while message in positive_log:
                 message = random.choice(p_txt)
                 print("Choosing new positive message")
@@ -81,12 +75,8 @@ def positive_choice():
 
 # chooses an encouragement that isn't in the log, clears log if every line has been chosen
 def encouragements_choice():
-    #encouragements_log = []
     with open("encouragements_log.txt", "r", encoding="utf-8-sig") as e_log:
         encouragements_log = e_log.readlines()
-        #for e in e_log.readlines():
-            #encouragements_log.append(e)
-            # print("append to encouragements_log")
     print('Encouragements log length: ' + str(len(encouragements_log)))
     if len(encouragements_log) >= 77:
         open('encouragements_log.txt', 'w').close()
@@ -94,8 +84,7 @@ def encouragements_choice():
     with open("encouragements.txt", "r", encoding="utf-8-sig") as encouragements:
         e_txt = encouragements.readlines()
         line = random.choice(e_txt)
-        #line = random.choice(encouragements.readlines())
-        if len(encouragements_log) != 0 and len(encouragements_log) < 77:
+        if len(encouragements_log) != 0 and len(encouragements_log) < len(e_txt):
             while line in encouragements_log:
                 line = random.choice(e_txt)
                 print("Choosing new line")
@@ -106,12 +95,8 @@ def encouragements_choice():
 
 # chooses a compliment that isn't in the log, clears log if every line has been chosen
 def compliments_choice():
-    #compliments_log = []
     with open("compliments_log.txt", "r", encoding="utf-8-sig") as c_log:
         compliments_log = c_log.readlines()
-        #for c in c_log.readlines():
-            #compliments_log.append(c)
-            # print("append compliments_log")
     print('Compliments log length: ' + str(len(compliments_log)))
     if len(compliments_log) >= 99:
         open('compliments_log.txt', 'w').close()
@@ -119,8 +104,7 @@ def compliments_choice():
     with open("compliments.txt", "r", encoding="utf-8-sig") as compliments:
         c_txt = compliments.readlines()
         line = random.choice(c_txt)
-        #line = random.choice(compliments.readlines())
-        if len(compliments_log) != 0 and len(compliments_log) < 99:
+        if len(compliments_log) != 0 and len(compliments_log) < len(c_txt):
             while line in compliments_log:
                 line = random.choice(c_txt)
                 print("choosing new line")
@@ -136,7 +120,6 @@ def follower_choice():
         follower_log = []
         for name in f_log.readlines():
             follower_log.append(name[:-1])
-            # print("append follower_log")
         if len(follower_log) >= user.followers_count:
             print('Follower log length: ' + str(len(follower_log)))
             clear_followers()
